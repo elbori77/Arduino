@@ -1,0 +1,67 @@
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+#include <LCD.h>
+#include <dht11.h>
+
+dht11 DHT11;
+#define DHT11PIN 8    // Temperature sensor
+#define I2C_ADDR 0x27 // I2C address 
+#define BACKLIGHT_PIN 3 
+
+#define En_pin 2  // PIN  6 of circuit PCF8574  (Named P2) 
+
+#define Rw_pin 1  // PIN  5 of circuit PCF8574  (Named P1)
+
+#define Rs_pin 0  // PIN  4 of circuit PCF8574  (Named P0) 
+
+#define D4_pin 4  // PIN  9 of circuit PCF8574  (Named P4)  
+
+#define D5_pin 5  // PIN 10 of circuit PCF8574  (Named P5)  
+
+#define D6_pin 6  // PIN 11 of circuit PCF8574  (Named P6)  
+
+#define D7_pin 7  // PIN 12 of circuit PCF8574  (Named P7) 
+
+
+// We create a new LiquidCrystal_I2C called lcd
+
+LiquidCrystal_I2C lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin); 
+
+/*! List of parameters of this constructor method
+
+    @param      lcd_Addr[in] I2C address of the IO expansion module. For I2CLCDextraIO,
+    the address can be configured using the on board jumpers.
+    @param      En[in] LCD En (Enable) pin connected to the IO extender module
+    @param      Rw[in] LCD Rw (Read/write) pin connected to the IO extender module
+    @param      Rs[in] LCD Rs (Reset) pin connected to the IO extender module
+    @param      d0[in] LCD data 0 pin map on IO extender module
+    @param      d1[in] LCD data 1 pin map on IO extender module
+    @param      d2[in] LCD data 2 pin map on IO extender module
+    @param      d3[in] LCD data 3 pin map on IO extender module
+    */
+
+void setup(void){
+
+   
+  lcd.begin(16,2);               // initialize the lcd 
+   
+  // Switch on the backlight
+  
+ lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);  
+ lcd.setBacklight(HIGH);
+}
+
+void loop(void){
+
+  lcd.home ();                   // go home
+  DHT11.read(DHT11PIN);         //  initialize the temperature sensor
+  lcd.print("Temperature: ");
+  lcd.print(int(DHT11.temperature * 1.8 + 32)); // print and convert to F
+  lcd.print("F"); 
+  lcd.setCursor ( 0, 1 );        // go to the next line
+  lcd.print ("Humidity: ");
+  lcd.print(DHT11.humidity);
+  lcd.print("%"); 
+  delay(1000);
+
+}
